@@ -29,6 +29,10 @@ RUN /venv/bin/pip install --upgrade pip setuptools wheel && \
 # Copy application code
 COPY . .
 
+# Copy boot script
+COPY ./boot/docker-run.sh /opt/run.sh
+RUN chmod +x /opt/run.sh
+
 # Expose port for FastAPI
 EXPOSE 8000
 
