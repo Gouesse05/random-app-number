@@ -11,7 +11,6 @@ random-app-number/
 │   │   └── copilot-instructions.md
 │   ├── src/
 │   │   └── main.py              # FastAPI app logic
-│   ├── main.py                  # Entry point for uvicorn
 │   ├── requirements.txt          # Python dependencies
 │   ├── Dockerfile               # Docker image (Python 3.12.3)
 │   └── docker-compose.yml       # Docker Compose configuration
@@ -42,7 +41,7 @@ pip install -r requirements.txt
 
 4. **Run the server:**
 ```bash
-uvicorn main:app --reload
+uvicorn src.main:app --reload
 ```
 
 Access Swagger UI: **http://127.0.0.1:8000/docs**
@@ -95,7 +94,6 @@ pytest
 
 ### Code structure
 - `src/main.py` - Core FastAPI application with SQLModel models and endpoints
-- `main.py` - Wrapper that imports app from `src/main.py` (for uvicorn)
 
 ### Adding new endpoints
 1. Edit `src/main.py`
