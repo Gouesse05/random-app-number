@@ -1,0 +1,5 @@
+sqlmodel==0.0.30
+pydantic==2.12.4
+sqlalchemy==2.0.44
+timescaledb==0.0.4
+gunicorn==23.0.0
