@@ -110,6 +110,32 @@ status() {
     fi
 }
 
+# Run with Gunicorn (production-like)
+gunicorn() {
+    log_info "Starting API with Gunicorn (4 workers, production mode)"
+    log_info "API available at: http://localhost:$PORT"
+    log_info "Swagger UI: http://localhost:$PORT/docs"
+    
+    # Ensure venv is activated
+    if [ -z "$VIRTUAL_ENV" ]; then
+        log_warning "Virtual environment not activated. Activating..."
+        if [ -d "../../../venv" ]; then
+            source ../../../venv/bin/activate
+        elif [ -d "/home/sdd/mon_projet_dbt/venv" ]; then
+            source /home/sdd/mon_projet_dbt/venv/bin/activate
+        fi
+    fi
+    
+    # Launch Gunicorn with Uvicorn workers
+    gunicorn -k uvicorn.workers.UvicornWorker \
+        -w 4 \
+        -b 0.0.0.0:$PORT \
+        --access-logfile - \
+        --error-logfile - \
+        --log-level info \
+        src.main:app
+}
+
 # Main script logic
 case "${1:-run}" in
     build)
@@ -131,16 +157,20 @@ case "${1:-run}" in
     status)
         status
         ;;
+    gunicorn)
+        gunicorn
+        ;;
     *)
-        echo "Usage: $0 {build|run|stop|logs|shell|status}"
+        echo "Usage: $0 {build|run|stop|logs|shell|status|gunicorn}"
         echo ""
         echo "Commands:"
-        echo "  build    - Build Docker image"
-        echo "  run      - Build and run container (default)"
-        echo "  stop     - Stop running container"
-        echo "  logs     - View container logs (follow mode)"
-        echo "  shell    - Open interactive shell in container"
-        echo "  status   - Show container status"
+        echo "  build     - Build Docker image"
+        echo "  run       - Build and run container (default)"
+        echo "  stop      - Stop running container"
+        echo "  logs      - View container logs (follow mode)"
+        echo "  shell     - Open interactive shell in container"
+        echo "  status    - Show container status"
+        echo "  gunicorn  - Run with Gunicorn (production mode, local)"
         echo ""
         echo "Environment variables:"
         echo "  PORT          - Container port (default: 8000)"
@@ -149,6 +179,7 @@ case "${1:-run}" in
         echo "Examples:"
         echo "  ./boot/docker-run.sh run"
         echo "  ./boot/docker-run.sh logs"
+        echo "  ./boot/docker-run.sh gunicorn"
         echo "  PORT=9000 ./boot/docker-run.sh run"
         echo "  DATABASE_URL=postgresql://user:pass@host:5432/db ./boot/docker-run.sh run"
         exit 1
