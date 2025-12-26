@@ -5,6 +5,13 @@
 
 set -e
 
+# Source virtual environment if running locally (non-Docker)
+if [ -d "../../../venv" ]; then
+    source ../../../venv/bin/activate
+elif [ -d "/home/sdd/mon_projet_dbt/venv" ]; then
+    source /home/sdd/mon_projet_dbt/venv/bin/activate
+fi
+
 CONTAINER_NAME="random-number-api"
 IMAGE_NAME="random-number-api"
 PORT=${PORT:-8000}
